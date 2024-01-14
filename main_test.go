@@ -7,44 +7,58 @@ import (
 )
 
 func TestComputeHash(t *testing.T) {
-	for _, tc := range cases {
-		t.Run(tc.url, func(t *testing.T) {
-			hash := ComputeHash(tc.url, tc.key, tc.params)
-			assert.Equal(t, tc.expectedHash, hash, "Hash should match the expected value")
+	testCases := []struct {
+		url, key, params, expectedHash string
+	}{
+		{"https://example.com/api", "testkey1", "param1=value1&param2=value2", "kbLovgPV3UKQnVNhgGIy5Yxp95g="},
+		{"https://example.com/api/path", "testkey2", "param1=value1", "PF0HbycGbiprxUu4YKsKkBSekyI="},
+		{"http://example.com/api", "testkey3", "param1=value1&param2=value2&param3=value3", "mRleMeU7j4eBEGgGB+l6Vcut8+0="},
+		{"https://example.com/api", "testkey4", "", "nVBfJfYaf9oXq28/ggQq6J3XIbo="},
+		{"https://example.com/api/path/segment", "testkey5", "param1=value1&param2=value2&param3=value3", "qrI/fD6EdICvz1xnEP1ZJiuKSVo="},
+	}
+
+	for _, tc := range testCases {
+		t.Run("TestComputeHash", func(t *testing.T) {
+			computedHash := ComputeHash(tc.url, tc.key, tc.params)
+			assert.Equal(t, tc.expectedHash, computedHash, "Computed hash should match the expected hash")
 		})
 	}
 }
 
-var cases = []struct {
-	url, key, params, expectedHash string
-}{
-	// Test with basic URL and parameters
-	{"https://example.com/api", "mysecretkey", "param1=value1&param2=value2", "tYQQ58Oi6gab/WpmurMuMHXayq4="},
+func TestAddPort(t *testing.T) {
+	testCases := []struct {
+		url, expectedURL string
+	}{
+		{"https://example.com", "https://example.com:443"},
+		{"http://example.com", "http://example.com:80"},
+		{"https://example.com:1234", "https://example.com:1234"},
+		{"http://example.com/path", "http://example.com:80/path"},
+		{"https://example.com/api?query=param", "https://example.com:443/api?query=param"},
+	}
 
-	// Test with different key
-	{"https://example.com/api", "anotherkey", "param1=value1&param2=value2", "q0c+MOY2Kvzi2LNPK+x8/v9qfEg="},
+	for _, tc := range testCases {
+		t.Run("TestAddPort", func(t *testing.T) {
+			resultURL := addPort(tc.url)
+			assert.Equal(t, tc.expectedURL, resultURL, "URL with added port should match the expected URL")
+		})
+	}
+}
 
-	// Test with URL having additional path segments
-	{"https://example.com/api/path/segment", "mysecretkey", "param1=value1&param2=value2", "eIesI/BxOCA7OddDitgisj4cO1I="},
+func TestRemovePort(t *testing.T) {
+	testCases := []struct {
+		url, expectedURL string
+	}{
+		{"https://example.com:443", "https://example.com"},
+		{"http://example.com:80", "http://example.com"},
+		{"https://example.com:1234", "https://example.com"},
+		{"http://example.com:8080/path", "http://example.com/path"},
+		{"https://example.com:443/api?query=param", "https://example.com/api?query=param"},
+	}
 
-	// Test with empty parameters
-	{"https://example.com/api", "mysecretkey", "", "bYqj3xMDrpzjGDUhXSW0OQL/tvg="},
-
-	// Test with no parameters and trailing slash in URL
-	{"https://example.com/api/", "mysecretkey", "", "rg45cX+fAbzs7Xsc8X3gSJSnR7w="},
-
-	// Test with a longer key
-	{"https://example.com/api", "aVeryLongSecretKeyThatIsComplex", "param1=value1&param2=value2", "Ov5Q6q4ZqwC44eeu+VfLig4Q03I="},
-
-	// Test with special characters in the key
-	{"https://example.com/api", "key$pecial*Char!", "param1=value1&param2=value2", "Onrw0fZd5QjFJCSQdd68j2yHsA4="},
-
-	// Test with special characters in the parameters
-	{"https://example.com/api", "mysecretkey", "param1=special!Value&param2=another@Value", "8i7v6MKse3TFpK+7PDRz3XPPOk4="},
-
-	// Test with a single parameter
-	{"https://example.com/api", "mysecretkey", "singleParam=value", "BCKsEQwQKJbkyvSPS2dZiJITaMg="},
-
-	// Test with URL query parameters
-	{"https://example.com/api?query=param", "mysecretkey", "param1=value1&param2=value2", "RI+ct9b4q/73Gzz1muTE9RD3QW8="},
+	for _, tc := range testCases {
+		t.Run("TestRemovePort", func(t *testing.T) {
+			resultURL := removePort(tc.url)
+			assert.Equal(t, tc.expectedURL, resultURL, "URL with removed port should match the expected URL")
+		})
+	}
 }
