@@ -24,10 +24,16 @@ coming from Twilio by using HMAC-SHA1 hashing algorithm.
 To use this tool, you need to have Go installed on your system. Follow these
 steps to set it up:
 
+   ```bash
+   go install github.com/kmesiab/go-twilio-compute@latest
+   ```
+
+or
+
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/twilio-signature-calculator.git
+   git clone https://github.com/kmesiab/go-twilio-compute.git
    ```
 
 2. Navigate to the project directory:
@@ -47,7 +53,10 @@ steps to set it up:
 Run the tool with the required flags:
 
 ```bash
-./twilio-signature-calculator --url <Twilio API URL> --key <Your Twilio API Key>
+./twilio-signature-calculator 
+
+--url <url Twilio will call> 
+--key <your Twilio API key>
 --params <URL encoded body of the message>
 ```
 
