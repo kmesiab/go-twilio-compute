@@ -39,7 +39,7 @@ or
 2. Navigate to the project directory:
 
    ```bash
-   cd twilio-signature-calculator
+   cd go-twilio-compute
    ```
 
 3. Build the project:
@@ -53,7 +53,7 @@ or
 Run the tool with the required flags:
 
 ```bash
-./twilio-signature-calculator 
+./go-twilio-compute
 
 --url <url Twilio will call> 
 --key <your Twilio API key>
@@ -63,7 +63,7 @@ Run the tool with the required flags:
 Example:
 
 ```bash
-./twilio-signature-calculator --url "https://example.com/api" --key "mysecretkey"
+./go-twilio-compute --url "https://example.com/api" --key "mysecretkey"
 --params "Body=sample%20message%3F&From=%2B12533"
 ```
 
